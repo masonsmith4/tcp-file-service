@@ -26,6 +26,15 @@ public class Server {
                 File file = new File("ServerFiles", fileName);
                 boolean delete = file.delete();
                 System.out.println("Delete file: " + delete);
+
+                ByteBuffer response = ByteBuffer.allocate(1);
+                if (delete) {
+                    response.put((byte) 'S');
+                } else {
+                    response.put((byte) 'F');
+                }
+                response.flip();
+                clientChannel.write(response);
             } else {
                 System.out.println("Unknown " + (char) comm);
             }
