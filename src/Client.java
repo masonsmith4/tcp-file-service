@@ -12,9 +12,12 @@ public class Client {
         String ip = args[0];
         int port = Integer.parseInt(args[1]);
 
+        String filename = "helloworld.txt";
+
         SocketChannel socket = SocketChannel.open(new InetSocketAddress(ip, port));
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        buffer.put((byte) 'H');
+        buffer.put((byte) 'D');
+        buffer.put(filename.getBytes());
         buffer.flip();
         socket.write(buffer);
         socket.shutdownOutput();

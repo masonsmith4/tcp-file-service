@@ -16,8 +16,16 @@ public class Server {
             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
             clientChannel.read(byteBuffer);
             byteBuffer.flip();
-            byte b = byteBuffer.get();
-            System.out.println((char) b);
+
+            byte comm = byteBuffer.get();
+
+            if (comm == 'D') {
+                String fileName = new String(byteBuffer.array(), byteBuffer.position(), byteBuffer.remaining());
+                System.out.println("Delete: " + fileName);
+            } else {
+                System.out.println("Unknown " + (char) comm);
+            }
+
             clientChannel.close();
         }
     }
