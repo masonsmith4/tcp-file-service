@@ -7,12 +7,12 @@ public class Server {
     public static void main(String[] args) throws Exception{
         int port = 5000;
 
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.bind(new InetSocketAddress(port));
+        ServerSocketChannel listener = ServerSocketChannel.open();
+        listener.bind(new InetSocketAddress(port));
         System.out.println("Server starting on port " + port);
 
         while(true){
-            SocketChannel clientChannel = serverSocketChannel.accept();
+            SocketChannel clientChannel = listener.accept();
             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
             clientChannel.read(byteBuffer);
             byteBuffer.flip();
