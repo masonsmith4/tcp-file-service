@@ -1,3 +1,4 @@
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
@@ -22,6 +23,9 @@ public class Server {
             if (comm == 'D') {
                 String fileName = new String(byteBuffer.array(), byteBuffer.position(), byteBuffer.remaining());
                 System.out.println("Delete: " + fileName);
+                File file = new File("ServerFiles", fileName);
+                boolean delete = file.delete();
+                System.out.println("Delete file: " + delete);
             } else {
                 System.out.println("Unknown " + (char) comm);
             }
