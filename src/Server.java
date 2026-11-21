@@ -21,7 +21,9 @@ public class Server {
             byte comm = byteBuffer.get();
 
             if (comm == 'D') {
-                String fileName = new String(byteBuffer.array(), byteBuffer.position(), byteBuffer.remaining());
+                String fileName = new String(byteBuffer.array(),
+                        byteBuffer.position(),
+                        byteBuffer.remaining());
                 System.out.println("Delete: " + fileName);
                 File file = new File("ServerFiles", fileName);
                 boolean delete = file.delete();
