@@ -21,5 +21,18 @@ public class Client {
         buffer.flip();
         socket.write(buffer);
         socket.shutdownOutput();
+
+        ByteBuffer response = ByteBuffer.allocate(1);
+        socket.read(response);
+        response.flip();
+        byte status = response.get();
+
+        if (status == 'S') {
+            System.out.println("Delete successful");
+        } else {
+            System.out.println("Delete failed");
+        }
+
+        socket.close();
     }
 }
