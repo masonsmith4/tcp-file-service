@@ -5,10 +5,14 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     public static void main(String[] args) throws Exception {
         int port = 5001;
+
+        ExecutorService pool = Executors.newFixedThreadPool(10);
 
         ServerSocketChannel listener = ServerSocketChannel.open();
         listener.bind(new InetSocketAddress(port));
@@ -16,6 +20,12 @@ public class Server {
 
         while (true) {
             SocketChannel clientChannel = listener.accept();
+            pool.submit(() -> handleClient(clientChannel));
+        }
+    }
+
+    static void handleClient(SocketChannel clientChannel) {
+        try {
             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
             clientChannel.read(byteBuffer);
             byteBuffer.flip();
@@ -190,6 +200,8 @@ public class Server {
                 System.out.println("Unknown " + (char) comm);
             }
             clientChannel.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 }
