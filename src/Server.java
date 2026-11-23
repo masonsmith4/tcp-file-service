@@ -78,7 +78,10 @@ public class Server {
                     );
                     File oldFile = new File("ServerFiles", oldName);
                     File newFile = new File("ServerFiles", newName);
-                    boolean rename = oldFile.renameTo(newFile);
+                    boolean rename = false;
+                    if (oldFile.exists() && !newFile.exists()) {
+                        rename = oldFile.renameTo(newFile);
+                    }
                     ByteBuffer response = ByteBuffer.allocate(1);
                     if (rename) {
                         response.put((byte) 'S');
@@ -142,7 +145,7 @@ public class Server {
                 clientChannel.write(ready);
 
                 ByteBuffer nameLength = ByteBuffer.allocate(4);
-                while (nameLength.hasRemaining()) {
+                while (nameLength.hasRemaining())   {
                     clientChannel.read(nameLength);
                 }
                 nameLength.flip();
