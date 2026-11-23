@@ -5,6 +5,10 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class Client {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
@@ -16,6 +20,7 @@ public class Client {
         int port = Integer.parseInt(args[1]);
 
         Scanner scn = new Scanner(System.in);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
 
         while (true) {
             System.out.println("Commands:");
@@ -43,13 +48,21 @@ public class Client {
             } else if (command.equals("S")) {
                 System.out.print("File name to download: ");
                 String fileName = scn.nextLine().trim();
-                download(ip, port, fileName);
+                getSubmit(executor,ip,port,fileName);
             } else if (command.equals("U")) {
                 System.out.print("File name to upload: ");
                 String fileName = scn.nextLine().trim();
                 upload(ip, port, fileName);
+                executor.submit(() -> {
+                    try {
+                        upload(ip, port, fileName);
+                    } catch (Exception e) {
+                        System.out.println("Upload failed: " + e.getMessage());
+                    }
+                });
             } else if (command.equals("Q")) {
                 System.out.println("Quitting...");
+                executor.shutdown();
                 System.exit(0);
                 break;
             } else {
@@ -57,6 +70,16 @@ public class Client {
             }
         }
         scn.close();
+    }
+
+    private static Future<?> getSubmit(ExecutorService executor, String ip, int port, String fileName) {
+        return executor.submit(() -> {
+            try {
+                download(ip, port, fileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     static void list(String ip, int port) throws Exception {
