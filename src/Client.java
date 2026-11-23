@@ -177,7 +177,7 @@ public class Client {
             }
 
             output.close();
-            System.out.println("Download successful");
+            System.out.println("Download of " + fileName + " has completed.");
         } else {
             System.out.println("Download failed. File not found.");
         }
