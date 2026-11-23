@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Scanner;
 
 public class Server {
     public static void main(String[] args) throws Exception {
@@ -17,10 +18,26 @@ public class Server {
         ServerSocketChannel listener = ServerSocketChannel.open();
         listener.bind(new InetSocketAddress(port));
         System.out.println("Server starting on port " + port);
+        System.out.println("Type Q to shut down the server.");
 
-        while (true) {
-            SocketChannel clientChannel = listener.accept();
-            pool.submit(() -> handleClient(clientChannel));
+        new Thread(() -> {
+            Scanner scn = new Scanner(System.in);
+            while (!scn.nextLine().equalsIgnoreCase("Q")) {
+            }
+            try {
+                listener.close();
+            } catch (Exception e) {
+            }
+        }).start();
+
+        try {
+            while (true) {
+                SocketChannel clientChannel = listener.accept();
+                pool.submit(() -> handleClient(clientChannel));
+            }
+        } catch (Exception e) {
+            pool.shutdown();
+            System.out.println("Server stopped.");
         }
     }
 
