@@ -163,24 +163,35 @@ public class Server {
                 String fileName = new String(nameBytes);
 
                 File file = new File("ServerFiles", fileName);
-                FileOutputStream output = new FileOutputStream(file);
 
-                ByteBuffer fileData = ByteBuffer.allocate(1024);
+                boolean upload = true;
+                try {
+                    FileOutputStream output = new FileOutputStream(file);
 
-                while (clientChannel.read(fileData) != -1) {
-                    fileData.flip();
+                    ByteBuffer fileData = ByteBuffer.allocate(1024);
 
-                    byte[] data = new byte[fileData.remaining()];
-                    fileData.get(data);
-                    output.write(data);
+                    while (clientChannel.read(fileData) != -1) {
+                        fileData.flip();
 
-                    fileData.clear();
+                        byte[] data = new byte[fileData.remaining()];
+                        fileData.get(data);
+                        output.write(data);
+
+                        fileData.clear();
+                    }
+
+                    output.close();
+                } catch (Exception e) {
+                    upload = false;
+                    System.out.println("Upload error: " + e.getMessage());
                 }
 
-                output.close();
-
                 ByteBuffer response = ByteBuffer.allocate(1);
-                response.put((byte) 'S');
+                if (upload) {
+                    response.put((byte) 'S');
+                } else {
+                    response.put((byte) 'F');
+                }
                 response.flip();
                 clientChannel.write(response);
 
